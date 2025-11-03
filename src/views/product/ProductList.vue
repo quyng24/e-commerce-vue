@@ -19,7 +19,6 @@ const fetchProducts = async () => {
   try {
     loading.value = true
     products.value = await productService.getProducts()
-    console.log(products.value)
   } catch (error) {
     console.error(error)
   } finally {

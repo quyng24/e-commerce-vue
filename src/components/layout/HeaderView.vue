@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { APP_ROUTE_NAMES } from '@/constants/routeNames'
+import { UseAuthStore } from '@/stores/authStore'
 import { useThemeStore } from '@/stores/themeStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const authStore = UseAuthStore()
 const themeStore = useThemeStore()
 </script>
 
@@ -44,13 +48,16 @@ const themeStore = useThemeStore()
             <router-link
               class="nav-link active"
               aria-current="page"
-              :to="{ name: APP_ROUTE_NAMES.PRODUCT_CREATE }"
-              >Add Product</router-link
+              :to="{ name: APP_ROUTE_NAMES.CONTACT_US }"
+              >Contact Us</router-link
             >
           </li>
         </ul>
 
         <ul class="d-flex navbar-nav">
+          <li class="nav-link" v-if="authStore.isAuthenticated">
+            Welcome, {{ authStore.user?.email }}
+          </li>
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -113,7 +120,7 @@ const themeStore = useThemeStore()
             </ul>
           </li>
 
-          <li class="nav-item">
+          <li class="nav-item" v-if="!authStore.isAuthenticated">
             <router-link
               class="nav-link active"
               aria-current="page"
@@ -122,13 +129,21 @@ const themeStore = useThemeStore()
             >
           </li>
 
-          <li class="nav-item">
+          <li class="nav-item" v-if="!authStore.isAuthenticated">
             <router-link
               class="nav-link active"
               aria-current="page"
               :to="{ name: APP_ROUTE_NAMES.SIGN_UP }"
               >Sign Up</router-link
             >
+          </li>
+          <li class="nav-item" v-if="authStore.isAuthenticated">
+            <button
+              class="nav-link"
+              @click="[authStore.signOutUser(), router.push({ name: APP_ROUTE_NAMES.HOME })]"
+            >
+              Sign Out
+            </button>
           </li>
         </ul>
       </div>

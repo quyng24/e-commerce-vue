@@ -67,9 +67,9 @@ const filteredCategory = computed(() => {
 <template>
   <div>
     <div
-      class="background-home bg-success w-100 position-relative overflow-hidden mb-4 py-5 d-flex flex-column align-items-center"
+      class="background-home bg-success w-100 position-relative overflow-hidden mb-4 py-5 d-flex flex-column align-items-center hero-section"
     >
-      <div class="position-absolute top-0 start-0 w-100 h-100 bg-success opacity-50"></div>
+      <div class="position-absolute top-0 start-0 w-100 h-100"></div>
 
       <div class="container-fluid position-relative z-1">
         <div class="row justify-content-center text-center">
@@ -163,10 +163,9 @@ const filteredCategory = computed(() => {
 </template>
 
 <style>
-.background-home {
-  background-image: url();
-  background-size: cover;
-  background-position: center;
-  min-height: 400px;
+.hero-section {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+  padding: 80px 0;
 }
 </style>
