@@ -1,4 +1,5 @@
 import { APP_ROUTE_NAMES } from '@/constants/routeNames'
+import { UseAuthStore } from '@/stores/authStore'
 import AccessDenied from '@/views/auth/AccessDenied.vue'
 import NotFound from '@/views/auth/NotFound.vue'
 import SignIn from '@/views/auth/SignIn.vue'
@@ -13,14 +14,64 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: APP_ROUTE_NAMES.HOME, component: HomeView },
-    { path: '/contact-us', name: APP_ROUTE_NAMES.CONTACT_US, component: ContactUs },
-    { path: '/product-list', name: APP_ROUTE_NAMES.PRODUCT_LIST, component: ProductList },
-    { path: '/product-create', name: APP_ROUTE_NAMES.PRODUCT_CREATE, component: ProductUpsert },
+    {
+      path: '/contact-us',
+      name: APP_ROUTE_NAMES.CONTACT_US,
+      component: ContactUs,
+      beforeEnter: [isAuthenticatedFn],
+    },
+    {
+      path: '/product-list',
+      name: APP_ROUTE_NAMES.PRODUCT_LIST,
+      component: ProductList,
+      beforeEnter: [isAdminFn],
+    },
+    {
+      path: '/product-create',
+      name: APP_ROUTE_NAMES.PRODUCT_CREATE,
+      component: ProductUpsert,
+      beforeEnter: [isAdminFn],
+    },
     { path: '/sign-in', name: APP_ROUTE_NAMES.SIGN_IN, component: SignIn },
     { path: '/sign-up', name: APP_ROUTE_NAMES.SIGN_UP, component: SignUp },
     { path: '/access-denied', name: APP_ROUTE_NAMES.ACCESS_DENIED, component: AccessDenied },
     { path: '/not-found', name: APP_ROUTE_NAMES.NOT_FOUND, component: NotFound },
-    { path: '/product-update/:id', name: APP_ROUTE_NAMES.PRODUCT_UPDATE, component: ProductUpsert },
+    {
+      path: '/product-update/:id',
+      name: APP_ROUTE_NAMES.PRODUCT_UPDATE,
+      component: ProductUpsert,
+      beforeEnter: [isAdminFn],
+    },
   ],
 })
+
+router.beforeEach(async (toString, from) => {
+  const authStore = UseAuthStore()
+  if (!authStore.initialize) {
+    await authStore.initializeAuth()
+  }
+})
+
+function isAdminFn() {
+  const authStore = UseAuthStore()
+  if (authStore.isAuthenticated) {
+    if (authStore.role === 'admin') {
+      return true
+    } else {
+      return { name: APP_ROUTE_NAMES.ACCESS_DENIED }
+    }
+  } else {
+    return { name: APP_ROUTE_NAMES.SIGN_IN }
+  }
+}
+
+function isAuthenticatedFn() {
+  const authStore = UseAuthStore()
+  if (authStore.isAuthenticated) {
+    return true
+  } else {
+    return { name: APP_ROUTE_NAMES.SIGN_IN }
+  }
+}
+
 export default router
