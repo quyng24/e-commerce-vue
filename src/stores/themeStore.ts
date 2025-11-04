@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useThemeStore = defineStore('themeStore', {
-  state: () => ({ theme: 'dark' }),
-  actions: {
-    setTheme(newTheme: string) {
-      this.theme = newTheme
-      const bodyElement = document.body
-      bodyElement.setAttribute('data-bs-theme', newTheme)
-    },
-  },
+export const useThemeStore = defineStore('themeStore', () => {
+  const theme = ref('dark')
+  const setTheme = (newTheme: string) => {
+    theme.value = newTheme
+    const bodyElement = document.body
+    bodyElement.setAttribute('data-bs-theme', newTheme)
+  }
+
+  return { theme, setTheme }
 })
